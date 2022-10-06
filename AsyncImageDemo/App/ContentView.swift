@@ -9,6 +9,8 @@ import SwiftUI
 import AsyncImage
 
 struct ContentView: View {
+    @State private var showSlide = false
+    
     private let imageCache: ImageCache
     private let publisherCache: PublisherCache
     private let images: [ImageItem] = (1...100).map { _ in ImageItem() }
@@ -20,32 +22,64 @@ struct ContentView: View {
     
     var body: some View {
         NavigationView {
-            List {
-                ForEach(self.images) { item in
-                    NavigationLink(
-                        destination: DetailView(
-                            imageCache: self.imageCache,
-                            publisherCache: self.publisherCache,
-                            item: item
-                        )) {
-                            HStack(alignment: .center) {
-                                Spacer(minLength: 0)
-                                
+            ZStack {
+                List {
+                    Button("Show slide") { self.showSlide.toggle() }
+                    
+                    ForEach(self.images) { item in
+                        NavigationLink(
+                            destination: DetailView(
+                                imageCache: self.imageCache,
+                                publisherCache: self.publisherCache,
+                                item: item
+                            )) {
+                                HStack(alignment: .center) {
+                                    Spacer(minLength: 0)
+                                    
+                                    AsyncImage(
+                                        request: item.image.urlRequest,
+                                        imageCache: self.imageCache,
+                                        publisherCache: self.publisherCache
+                                    )
+                                    .frame(width: 200)
+                                    .cornerRadius(10)
+                                    
+                                    Spacer(minLength: 0)
+                                }
+                                .frame(height: 300)
+                        }
+                    }
+                }
+                
+                Group {
+                    if self.showSlide {
+                        VStack {
+                            Spacer(minLength: 90)
+                            
+                            HStack {
                                 AsyncImage(
-                                    request: item.image.urlRequest,
+                                    request: self.images[self.images.count - 1].image.urlRequest,
                                     imageCache: self.imageCache,
                                     publisherCache: self.publisherCache
                                 )
                                 .frame(width: 200)
-                                .cornerRadius(10)
+                                .clipShape(Circle())
                                 
-                                Spacer(minLength: 0)
+                                AsyncImage(
+                                    request: self.images[self.images.count - 2].image.urlRequest,
+                                    imageCache: self.imageCache,
+                                    publisherCache: self.publisherCache
+                                )
+                                .frame(width: 200)
+                                .clipShape(Circle())
                             }
-                            .frame(height: 300)
+                        }
                     }
                 }
+                .animation(.linear, value: self.showSlide)
+                .transition(.move(edge: .bottom))
+                .zIndex(99)
             }
-            .padding(.horizontal)
             .navigationBarTitle("AsyncImage", displayMode: .large)
         }
     }

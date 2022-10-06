@@ -31,13 +31,13 @@ public struct AsyncImage: View {
     }
     
     public var body: some View {
-        self.image
+        self.content
             .onAppear(perform: self.viewModel.load)
             .onDisappear(perform: self.viewModel.disappear)
     }
     
-    private var image: some View {
-        VStack {
+    private var content: some View {
+        ZStack {
             if self.viewModel.imageState.loading {
                 Rectangle()
                     .fill(Color(.tertiarySystemGroupedBackground))
@@ -45,16 +45,21 @@ public struct AsyncImage: View {
                         Spinner(animating: true, style: .medium, color: UIColor.label)
                     )
             }
-            else if let image = self.viewModel.imageState.image {
-                self.configuration(Image(uiImage: image))
-            }
-            else {
+            else if case .failure(_) = self.viewModel.imageState {
                 Rectangle()
                     .fill(Color(.tertiarySystemGroupedBackground))
                     .overlay(self.reloadView)
                     .onTapGesture(perform: self.viewModel.reload)
             }
+            
+            self.configuration(self.image)
         }
+    }
+    
+    private var image: Image {
+        guard let uiImage = self.viewModel.imageState.image else { return Image(uiImage: UIImage()) }
+        
+        return Image(uiImage: uiImage)
     }
     
     private var reloadView: some View {
