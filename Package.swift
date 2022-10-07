@@ -28,5 +28,6 @@ let package = Package(
                 "AsyncImage"
             ]
         ),
-    ]
+    ],
+    swiftLanguageVersions: [.v5]
 )
