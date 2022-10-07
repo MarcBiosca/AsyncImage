@@ -39,3 +39,9 @@ If you are working with a package, add the repository URL in your `Package.swift
 ```swift
 .package(url: "https://github.com/MarcBiosca/AsyncImage.git", from: "1.0.0")
 ```
+
+### CocoaPods
+Add the following line in your `Podfile`:
+```
+pod 'SimpleAsyncImage'
+```
