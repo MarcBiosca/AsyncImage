@@ -9,6 +9,9 @@ import Foundation
 import UIKit
 
 final class TemporaryImageCache: ImageCache {
+    // To facilitate integrations
+    static let shared = TemporaryImageCache()
+    
     private let cache = NSCache<NSURL, UIImage>()
     
     init() {

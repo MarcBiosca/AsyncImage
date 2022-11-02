@@ -11,6 +11,15 @@ iOS >= 13 AsyncImage with the following characteristics:
 ## Getting started
 You can clone this repository and run the `AsyncImageDemo` App.
 
+```swift
+AsyncImage("https://picsum.photos/200/300".urlRequest)
+    .frame(width: 200, height: 200)
+```
+
+You can optionally use the `configuration` to apply modifiers to the Image rather than directly to the View returned by AsyncImage.
+If not specified, default ones applied are: `resizable().renderingMode(.original)`
+
+### Controlling the cache
 > Warning: Make sure to create an ImageCache and PublisherCache object somewhere in your app/module and injected to the AsyncImage object. Do not create a new one per each image, otherwise it will not work as intended.
 
 ```swift
@@ -24,9 +33,6 @@ AsyncImage(
 )
 .frame(width: 200, height: 200)
 ```
-
-You can optionally use the `configuration` to apply modifiers to the Image rather than directly to the View returned by AsyncImage.
-If not specified, default ones applied are: `resizable().renderingMode(.original)`
 
 ## Install
 ### Swift Package Manager

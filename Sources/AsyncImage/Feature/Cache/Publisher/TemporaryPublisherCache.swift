@@ -9,6 +9,9 @@ import Combine
 import UIKit
 
 final class TemporaryPublisherCache: PublisherCache {
+    // To facilitate integrations
+    static let shared = TemporaryPublisherCache()
+    
     private var cache = [String: UIImageErrorPublisher]()
     private let concurrentQueue = DispatchQueue(label: "temporary-publisher", attributes: .concurrent)
     
