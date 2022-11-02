@@ -7,6 +7,5 @@
 
 public protocol PublisherCache {
     func set(_ value: UIImageErrorPublisher?, for key: String)
-
     func get(_ key: String) -> UIImageErrorPublisher?
 }

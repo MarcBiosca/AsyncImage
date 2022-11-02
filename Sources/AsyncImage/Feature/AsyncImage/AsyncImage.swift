@@ -14,7 +14,7 @@ public struct AsyncImage: View {
     
     public init(
         request: URLRequest?,
-        imageCache: ImageCache?,
+        imageCache: ImageCache,
         publisherCache: PublisherCache,
         configuration: @escaping (Image) -> Image = {
             $0.resizable().renderingMode(.original)
@@ -25,6 +25,23 @@ public struct AsyncImage: View {
                 request: request,
                 imageCache: imageCache,
                 publisherCache: publisherCache
+            )
+        )
+        
+        self.configuration = configuration
+    }
+    
+    public init(
+        _ request: URLRequest?,
+        configuration: @escaping (Image) -> Image = {
+            $0.resizable().renderingMode(.original)
+        }
+    ) {
+        self._viewModel = ObservedObject(
+            wrappedValue: AsyncImageVM(
+                request: request,
+                imageCache: TemporaryImageCache.shared,
+                publisherCache: TemporaryPublisherCache.shared
             )
         )
         self.configuration = configuration

@@ -17,7 +17,7 @@ final class AsyncImageVM: ObservableObject {
     private let request: URLRequest?
     private let networkAgent: NetworkAgentProtocol
     
-    private var images: ImageCache?
+    private var images: ImageCache
     private var publishers: PublisherCache
     private var imagePublisher: AnyCancellable?
     private var networkPublisher: AnyCancellable?
@@ -26,7 +26,7 @@ final class AsyncImageVM: ObservableObject {
     init(
         request: URLRequest?,
         networkAgent: NetworkAgentProtocol = NetworkAgent(),
-        imageCache: ImageCache?,
+        imageCache: ImageCache,
         publisherCache: PublisherCache
     ) {
         self.request = request
@@ -40,7 +40,7 @@ final class AsyncImageVM: ObservableObject {
     func load() {
         guard !self.isLoading, let url = self.request?.url else { return }
 
-        if let image = self.images?[url] {
+        if let image = self.images[url] {
             self.imageState = .success(image)
             return
         }
@@ -81,11 +81,6 @@ private extension AsyncImageVM {
 
         let publisher = self.networkAgent.download(from: self.request)
             .subscribe(on: self.imageProcessingQueue)
-            .handleEvents(receiveCompletion: { [weak self] _ in
-                self?.onCancel(url: url)
-            }, receiveCancel: { [weak self] in
-                self?.onCancel(url: url)
-            })
             .share()
             .eraseToAnyPublisher()
         
@@ -116,15 +111,11 @@ private extension AsyncImageVM {
         return Empty().eraseToAnyPublisher()
     }
     
-    func onCancel(url: URL) {
-        self.publishers.set(nil, for: url.absoluteString)
-        self.isLoading = false
-    }
-    
     func onOutput(url: URL, image: UIImage) {
-        self.images?[url] = image
+        self.images[url] = image
         self.set(.success(image))
         
+        self.publishers.set(nil, for: url.absoluteString)
         self.networkPublisher = nil
     }
     
